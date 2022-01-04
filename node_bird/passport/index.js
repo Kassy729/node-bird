@@ -5,11 +5,14 @@ const User = require("../models/user");
 
 module.exports = () => {
   passport.serializeUser((user, done) => {
+    // Strategy 성공 시 호출됨
     //req.login메서드가 호출 매 로그인 시 마다, req.session객체에 어떤 데이터를 저장할지 정하는 메서드
     done(null, user.id); // 세션에 user의 id만 저장
+    //req.session.passport.user
   });
 
   passport.deserializeUser((id, done) => {
+    // 매개변수 id는 req.session.passport.user에 저장된 값
     //serializeUser에서 세션에 저장했던 아이디를 받아 데이터베이스에서 사용자의 정보를 가져옴
     //passport.session 미들웨어가 이 메서드를 호출
     //매 요청시 실행,

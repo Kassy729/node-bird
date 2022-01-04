@@ -1,34 +1,32 @@
 const passport = require("passport");
-const localStrategy = require("passport-local").Strategy; //passport-local 모듈에서 Strategy 생성자 호출
+const LocalStrategy = require("passport-local").Strategy;
 const bcrypt = require("bcrypt");
 
-const User = require("../models/user");
+const { User } = require("../models");
 
 module.exports = () => {
   passport.use(
-    new localStrategy(
+    new LocalStrategy(
       {
         usernameField: "email",
         passwordField: "password",
       },
       async (email, password, done) => {
         try {
-          const exUser = await User.findOne({ where: { email } }); //일치하는 email을 확인
+          const exUser = await User.findOne({ where: { email } });
           if (exUser) {
-            const result = await bcrypt.compare(password, exUser.password); //email이 있다면 비밀번호를 비교
+            const result = await bcrypt.compare(password, exUser.password);
             if (result) {
-              done(null, exUser); //성공
+              done(null, exUser);
             } else {
               done(null, false, { message: "비밀번호가 일치하지 않습니다." });
-              //exUser 아이디는 일치하는데 비밀번호가 틀릴때
             }
           } else {
             done(null, false, { message: "가입되지 않은 회원입니다." });
-            //비밀번호가  다를때
           }
         } catch (error) {
           console.error(error);
-          done(erorr);
+          done(error);
         }
       }
     )
